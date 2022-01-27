@@ -26,20 +26,24 @@ function createGalleryMarkup(galleryItems) {
 
 function showLargeImage(event) {
   event.preventDefault();
-  const modalWindow = basicLightbox.create(`
-  <img class="is-open" src="${event.target.dataset.source}">
-`);
-  modalWindow.show();
 
-  const largeImage = document.querySelector(".is-open");
-  largeImage.addEventListener("click", event => {
-    modalWindow.close();
-  });
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  }
+  
+  const instance = basicLightbox.create(`
+      <img
+      src="${event.target.dataset.source}"
+      alt="${event.target.alt}"
+      />
+    `);
+ instance.show();
+ document.addEventListener("click", closeInstance);
+}
 
-  document.addEventListener("keydown", event => {
-    if (event.code !== "Escape") {
-      return;
-    }
-    modalWindow.close();
+function closeInstance(event) {
+  document.removeEventListener("click", event => {
+  instance.close();
   });
 }
+  
