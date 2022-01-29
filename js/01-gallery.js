@@ -22,28 +22,40 @@ function createGalleryMarkup(galleryItems) {
       />
     </a>
   </div>`
-).join("");}
+  ).join("");
+}
 
-function showLargeImage(event) {
+ function showLargeImage(event) {
   event.preventDefault();
 
   if (!event.target.classList.contains("gallery__image")) {
-    return;
+  return;
   }
-  
-  const instance = basicLightbox.create(`
+
+  const largeImage = basicLightbox.create(`
       <img
       src="${event.target.dataset.source}"
       alt="${event.target.alt}"
       />
-    `);
- instance.show();
- document.addEventListener("click", closeInstance);
+    `,
+    {
+    onShow: (instance) => {
+        instance.element().querySelector('img').addEventListener("click", () => {
+         instance.close();
+        });
+        document.addEventListener("keydown", event => {
+          if (event.code !== "Escape") {
+            return;    
+          }
+          instance.close();
+        });
+    },
+    onClose: (instance) => {
+        instance.element().querySelector('img').removeEventListener("click",() => {});
+        document.removeEventListener("keydown", () => {});
+      }
+    });
+ largeImage.show();
 }
 
-function closeInstance(event) {
-  document.removeEventListener("click", event => {
-  instance.close();
-  });
-}
-  
+
